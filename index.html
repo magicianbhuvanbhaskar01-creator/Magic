@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Controller</title>
+    <style>
+        body { 
+            font-family: Arial; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            text-align: center;
+        }
+        .status { 
+            font-size: 24px; 
+            margin: 20px 0; 
+            padding: 15px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+        }
+        .connected { color: #00ff00; }
+        .disconnected { color: #ff4444; }
+        button { 
+            padding: 15px 25px; 
+            font-size: 18px; 
+            margin: 10px; 
+            border: none;
+            border-radius: 8px;
+            background: #ff6b6b;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover { background: #ff5252; }
+        input { 
+            padding: 15px; 
+            font-size: 16px; 
+            width: 250px; 
+            border: none;
+            border-radius: 8px;
+            margin: 10px;
+        }
+        .magic-box {
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎩 Magic Controller</h1>
+    
+    <div id="status" class="status disconnected">🔴 Waiting for Connection</div>
+    
+    <div class="magic-box">
+        <h2>🪄 Mind Reading Magic</h2>
+        <input type="text" id="searchBox" placeholder="Enter what audience is thinking...">
+        <br>
+        <button onclick="magicSearch()">✨ Perform Magic</button>
+        <button onclick="connectPhones()">📱 Connect Phones</button>
+        <button onclick="disconnectPhones()">❌ Disconnect</button>
+    </div>
+
+    <div class="magic-box">
+        <h3>🎯 Quick Magic Options:</h3>
+        <button onclick="quickSearch('Amitabh Bachchan')">Amitabh Bachchan</button>
+        <button onclick="quickSearch('Shah Rukh Khan')">Shah Rukh Khan</button>
+        <button onclick="quickSearch('Salman Khan')">Salman Khan</button>
+    </div>
+
+    <script>
+        let isConnected = false;
+        
+        function connectPhones() {
+            isConnected = true;
+            document.getElementById('status').innerHTML = '🟢 Phones Connected - Magic Ready!';
+            document.getElementById('status').className = 'status connected';
+            
+            // Connection ke time magic effect
+            document.body.style.animation = 'flash 0.5s';
+        }
+        
+        function disconnectPhones() {
+            isConnected = false;
+            document.getElementById('status').innerHTML = '🔴 Disconnected';
+            document.getElementById('status').className = 'status disconnected';
+            localStorage.removeItem('magicSearch');
+        }
+        
+        function magicSearch() {
+            if (!isConnected) {
+                alert('❌ Please connect phones first!');
+                return;
+            }
+            
+            const searchTerm = document.getElementById('searchBox').value;
+            if (searchTerm) {
+                performMagicSearch(searchTerm);
+            } else {
+                alert('Please enter search term!');
+            }
+        }
+        
+        function quickSearch(term) {
+            if (!isConnected) {
+                alert('❌ Please connect phones first!');
+                return;
+            }
+            performMagicSearch(term);
+        }
+        
+        function performMagicSearch(searchTerm) {
+            const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(searchTerm)}`;
+            
+            // Magic command send karo
+            localStorage.setItem('magicSearch', searchUrl);
+            localStorage.setItem('searchTime', Date.now());
+            localStorage.setItem('magicTerm', searchTerm);
+            
+            // Visual feedback
+            document.body.style.background = 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)';
+            setTimeout(() => {
+                document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }, 1000);
+            
+            alert(`🎩 Magic Performed! \n"${searchTerm}" will appear on audience phone!`);
+            document.getElementById('searchBox').value = '';
+        }
+        
+        // CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes flash {
+                0% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+                50% { background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%); }
+                100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
