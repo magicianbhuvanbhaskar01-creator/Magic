@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magic Display</title>
+    <style>
+        body { 
+            font-family: Arial; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); 
+            color: white;
+            text-align: center;
+        }
+        .status { 
+            font-size: 20px; 
+            margin: 20px 0; 
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+        }
+        .code-input { 
+            text-align: center; 
+            margin: 30px 0; 
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 15px;
+        }
+        input { 
+            padding: 15px; 
+            font-size: 24px; 
+            text-align: center; 
+            border: none;
+            border-radius: 10px;
+            width: 200px;
+            margin: 10px;
+        }
+        button { 
+            padding: 15px 30px; 
+            font-size: 18px; 
+            border: none;
+            border-radius: 10px;
+            background: #00b894;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover { background: #00a085; }
+        #display { margin-top: 30px; }
+        .magic-happening {
+            font-size: 50px;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .disconnect-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #e17055;
+            padding: 10px;
+            border-radius: 50%;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="status">
+        <h1>🎭 Magic Display Screen</h1>
+        <div id="connectionStatus">Enter Magic Code to Connect</div>
+    </div>
+    
+    <div class="code-input" id="codeSection">
+        <h2>🔐 Enter Secret Code:</h2>
+        <input type="text" id="codeInput" placeholder="4-digit code" maxlength="4">
+        <br>
+        <button onclick="connectToController()">🪄 Connect to Magic</button>
+        <p style="font-size: 14px; opacity: 0.7;">Hint: Code is 1234</p>
+    </div>
+    
+    <button class="disconnect-btn" onclick="disconnect()" style="display:none;" id="disconnectBtn">❌</button>
+    
+    <div id="display"></div>
+
+    <script>
+        let connected = false;
+        const MAGIC_CODE = "1234";
+        
+        function connectToController() {
+            const enteredCode = document.getElementById('codeInput').value;
+            
+            if (enteredCode === MAGIC_CODE) {
+                connected = true;
+                document.getElementById('connectionStatus').innerHTML = '🟢 Connected to Magic Controller';
+                document.getElementById('codeSection').style.display = 'none';
+                document.getElementById('disconnectBtn').style.display = 'block';
+                
+                // Magic connection effect
+                document.body.style.background = 'linear-gradient(135deg, #00b894 0%, #00cec9 100%)';
+                
+                startMagicListener();
+            } else {
+                alert('❌ Wrong code! Try again.');
+                document.getElementById('codeInput').value = '';
+            }
+        }
+        
+        function startMagicListener() {
+            setInterval(() => {
+                if (connected) {
+                    checkForMagicSearch();
+                }
+            }, 500); // Har 0.5 second check karega
+        }
+        
+        function checkForMagicSearch() {
+            const searchUrl = localStorage.getItem('magicSearch');
+            const searchTime = localStorage.getItem('searchTime');
+            const magicTerm = localStorage.getItem('magicTerm');
+            
+            if (searchUrl && searchTime) {
+                const timeDiff = Date.now() - parseInt(searchTime);
+                
+                if (timeDiff < 3000) { // 3 second window
+                    performMagic(searchUrl, magicTerm);
+                    localStorage.removeItem('magicSearch');
+                    localStorage.removeItem('searchTime');
+                    localStorage.removeItem('magicTerm');
+                }
+            }
+        }
+        
+        function performMagic(searchUrl, term) {
+            // Magic happening effect
+            document.getElementById('display').innerHTML = `
+                <div class="magic-happening">
+                    ✨🎩✨<br>
+                    Magic is happening...<br>
+                    Reading your mind...<br>
+                    <small>You're thinking about: ${term}</small>
+                </div>
+            `;
+            
+            // Screen flash effect
+            document.body.style.background = '#ffeaa7';
+            
+            setTimeout(() => {
+                document.body.style.background = 'linear-gradient(135deg, #74b9ff 0%, #0984e3 100%)';
+                window.location.href = searchUrl;
+            }, 2000);
+        }
+        
+        function disconnect() {
+            connected = false;
+            localStorage.clear();
+            location.reload();
+        }
+        
+        // Emergency disconnect with double tap
+        let tapCount = 0;
+        document.addEventListener('click', function() {
+            tapCount++;
+            setTimeout(() => { tapCount = 0; }, 300);
+            if (tapCount === 3) {
+                disconnect();
+            }
+        });
+    </script>
+</body>
+</html>
